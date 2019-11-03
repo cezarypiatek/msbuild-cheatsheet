@@ -43,6 +43,27 @@
 </ItemGroup>
 ```
 
+### Remove duplicates
+
+```xml
+<ItemGroup>
+    <MyItems Include="MyFile.cs"/>
+    <MyItems Include="MyFile.cs">
+        <Culture>fr</Culture>
+    </MyItems>
+    <MyItems Include="myfile.cs"/>
+</ItemGroup>
+
+<Target Name="RemoveDuplicateItems">
+    <RemoveDuplicates
+        Inputs="@(MyItems)">
+        <Output
+            TaskParameter="Filtered"
+            ItemName="FilteredItems"/>
+    </RemoveDuplicates>
+</Target>
+```
+
 ### Write elements to file
 
 ```xml
@@ -61,3 +82,54 @@
 </Target>
 ```
 
+
+
+## Tasks
+
+### Using task
+
+```xml
+<UsingTask TaskName="NuGet.Build.Tasks.RestoreTask" AssemblyFile="NuGet.Build.Tasks.dll" />
+<Target Name="Restore" DependsOnTargets="_GenerateRestoreGraph">
+    <RestoreTask
+      RestoreGraphItems="@(_RestoreGraphEntryFiltered)"
+      RestoreDisableParallel="$(RestoreDisableParallel)"
+      RestoreNoCache="$(RestoreNoCache)"
+      RestoreIgnoreFailedSources="$(RestoreIgnoreFailedSources)"
+      RestoreRecursive="$(RestoreRecursive)"
+      RestoreForce="$(RestoreForce)"
+      HideWarningsAndErrors="$(HideWarningsAndErrors)"
+      Interactive="$(NuGetInteractive)"
+      RestoreForceEvaluate="$(RestoreForceEvaluate)"/>
+  </Target>
+```
+
+## Incremental build
+
+The target will be skipped if the output file exists is newer than all of the input files.
+
+```xml
+<Target Name="SampleTarget" Inputs="@(InputFiles)" Outputs="$(OutputFile)">
+</Target>
+```
+
+## Running target if file get changed
+This will run `GenerateCodeFromAttributes` target if any files tat belongs to `Compile` collection get changed.
+
+```xml
+<ItemDefinitionGroup>
+    <Compile>
+        <Generator>MSBuild:GenerateCodeFromAttributes</Generator>
+    </Compile>
+</ItemDefinitionGroup>
+```
+
+
+## Path's tasks
+
+Convert path to absolute path
+```xml
+<ConvertToAbsolutePath Paths="$(RestoreOutputPath)">
+    <Output TaskParameter="AbsolutePaths" PropertyName="RestoreOutputAbsolutePath" />
+</ConvertToAbsolutePath>
+```
