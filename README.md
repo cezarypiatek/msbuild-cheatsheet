@@ -82,6 +82,44 @@
 </Target>
 ```
 
+## Targets
+
+### Call another target
+
+```xml
+<Target Name="Start">
+    <CallTarget Targets="AnotherTarget" />
+</Target> 
+```
+
+### Incremental build
+
+The target will be skipped if the output file exists is newer than all of the input files.
+
+```xml
+<Target Name="SampleTarget" Inputs="@(InputFiles)" Outputs="$(OutputFile)">
+</Target>
+```
+
+### Run target for each element
+
+```xml
+<Target Name="SampleTarget" Inputs="@(SampleCollection)" Outputs="%(Identity).Dummy">
+    <Message Text="Item = %(SampleCollection.Identity)" />
+    <Message Text="Meta = %(SampleCollection.SampleMetadata)" />
+</Target>
+```
+
+### Running target if file get changed
+This will run `GenerateCodeFromAttributes` target if any files that belongs to `Compile` collection get changed.
+
+```xml
+<ItemDefinitionGroup>
+    <Compile>
+        <Generator>MSBuild:GenerateCodeFromAttributes</Generator>
+    </Compile>
+</ItemDefinitionGroup>
+```
 
 
 ## Tasks
@@ -102,26 +140,6 @@
       Interactive="$(NuGetInteractive)"
       RestoreForceEvaluate="$(RestoreForceEvaluate)"/>
   </Target>
-```
-
-## Incremental build
-
-The target will be skipped if the output file exists is newer than all of the input files.
-
-```xml
-<Target Name="SampleTarget" Inputs="@(InputFiles)" Outputs="$(OutputFile)">
-</Target>
-```
-
-## Running target if file get changed
-This will run `GenerateCodeFromAttributes` target if any files tat belongs to `Compile` collection get changed.
-
-```xml
-<ItemDefinitionGroup>
-    <Compile>
-        <Generator>MSBuild:GenerateCodeFromAttributes</Generator>
-    </Compile>
-</ItemDefinitionGroup>
 ```
 
 
