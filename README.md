@@ -142,6 +142,32 @@ This will run `GenerateCodeFromAttributes` target if any files that belongs to `
   </Target>
 ```
 
+### Inline task
+
+https://docs.microsoft.com/en-us/visualstudio/msbuild/msbuild-inline-tasks?view=vs-2019
+
+```xml
+<UsingTask TaskName="TokenReplace" TaskFactory="CodeTaskFactory" AssemblyFile="$(MSBuildToolsPath)\Microsoft.Build.Tasks.Core.dll">
+    <ParameterGroup>
+      <Path ParameterType="System.String" Required="true" />
+      <Token ParameterType="System.String" Required="true" />
+      <Replacement ParameterType="System.String" Required="true" />
+    </ParameterGroup>
+    <Task>
+      <Code Type="Fragment" Language="cs"><![CDATA[
+string content = File.ReadAllText(Path);
+content = content.Replace(Token, Replacement);
+File.WriteAllText(Path, content);
+
+]]></Code>
+    </Task>
+  </UsingTask>
+
+  <Target Name='Demo' >
+    <TokenReplace Path="C:\Project\Target.config" Token="$MyToken$" Replacement="MyValue"/>
+  </Target>
+```
+
 
 ## Path's tasks
 
@@ -151,3 +177,4 @@ Convert path to absolute path
     <Output TaskParameter="AbsolutePaths" PropertyName="RestoreOutputAbsolutePath" />
 </ConvertToAbsolutePath>
 ```
+
