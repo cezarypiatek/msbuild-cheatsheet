@@ -82,7 +82,38 @@
 </Target>
 ```
 
+## Conditions
+
+### Conditional Groups
+
+```xml
+<Choose>
+    <When Condition="'$(MSBuildAssemblyVersion)' == ''">
+        <PropertyGroup>
+            <CSharpTargetsPath>$(MSBuildFrameworkToolsPath)\Microsoft.CSharp.targets</CSharpTargetsPath>
+            <CscToolPath Condition="'$(CscToolPath)' == '' and '$(BuildingInsideVisualStudio)' != 'true'">$(MsBuildFrameworkToolsPath)</CscToolPath>
+        </PropertyGroup>
+    </When>
+    <When Condition="'$(IsCrossTargetingBuild)' == 'true'">
+        <PropertyGroup>
+            <CSharpTargetsPath>$(MSBuildToolsPath)\Microsoft.CSharp.CrossTargeting.targets</CSharpTargetsPath>
+        </PropertyGroup>
+    </When>
+    <Otherwise>
+        <PropertyGroup>
+            <CSharpTargetsPath>$(MSBuildToolsPath)\Microsoft.CSharp.CurrentVersion.targets</CSharpTargetsPath>
+        </PropertyGroup>
+    </Otherwise>
+</Choose>
+```
+
 ## Targets
+
+### Import file with targets
+
+```xml
+<Import Project="Microsoft.Managed.Core.targets"/>
+```
 
 ### Call another target
 
