@@ -173,7 +173,7 @@ This will run `GenerateCodeFromAttributes` target if any files that belongs to `
   </Target>
 ```
 
-### Inline task
+### Inline task with C#
 
 https://docs.microsoft.com/en-us/visualstudio/msbuild/msbuild-inline-tasks?view=vs-2019
 
@@ -197,6 +197,41 @@ File.WriteAllText(Path, content);
   <Target Name='Demo' >
     <TokenReplace Path="C:\Project\Target.config" Token="$MyToken$" Replacement="MyValue"/>
   </Target>
+```
+
+### Inline task with PowerShell
+
+https://blogs.msdn.microsoft.com/msbuild/2010/02/20/msbuild-task-factories-guest-starring-windows-powershell/
+
+```xml
+ <UsingTask TaskFactory="WindowsPowershellTaskFactory" TaskName="SendMail" AssemblyFile="$(TaskFactoryPath)WindowsPowershellTaskFactory.dll">
+        <ParameterGroup>
+            <From Required="true" ParameterType="System.String" />
+            <Recipients Required="true" ParameterType="System.String" />
+            <Subject Required="true" ParameterType="System.String" />
+            <Body Required="true" ParameterType="System.String" />
+            <RecipientCount Output="true" />
+        </ParameterGroup>
+        <Task>
+            <![CDATA[
+        $smtp = New-Object System.Net.Mail.SmtpClient
+        $smtp.Host = "mail.microsoft.com"
+        $smtp.Credentials = [System.Net.CredentialCache]::DefaultCredentials
+        $smtp.Send($From, $Recipients, $Subject, $Body)
+        $RecipientCount = $Recipients.Split(';').Length
+        $log.LogMessage([Microsoft.Build.Framework.MessageImportance]"High", "Send mail to {0} recipients.", $recipientCount)
+      ]]>
+        </Task>
+</UsingTask>
+<PropertyGroup>
+	<BuildLabEmail>buildlab@yourcompany.com</BuildLabEmail>
+	<BuildRecipients>interested@party.com;boss@guy.com</BuildRecipients>
+</PropertyGroup>
+<Target Name="SendMailAfterBuild" AfterTargets="Build">
+	<SendMail From="$(BuildLabEmail)" Recipients="$(BuildRecipients)" Subject="Build status" Body="Build completed">
+		<Output TaskParameter="RecipientCount" PropertyName="RecipientCount" />
+	</SendMail>
+</Target>
 ```
 
 
