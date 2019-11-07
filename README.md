@@ -209,3 +209,6 @@ Convert path to absolute path
 </ConvertToAbsolutePath>
 ```
 
+## Additional *.props and *.targets files loaded by convention
+
+https://docs.microsoft.com/en-us/visualstudio/msbuild/customize-your-build?view=vs-2019
