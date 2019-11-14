@@ -24,6 +24,7 @@
     </SampleProperty>
 </ItemGroup>
 ```
+[MSBuild well-known item metadata](https://docs.microsoft.com/en-us/visualstudio/msbuild/msbuild-well-known-item-metadata?view=vs-2019)
 
 ### Update metadata
 
@@ -34,6 +35,7 @@
     </SampleProperty>  
 </ItemGroup>
 ```
+
 
 ### Remove elements
 
